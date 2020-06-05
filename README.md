@@ -1,8 +1,8 @@
-# Learning Cognitive Biases in Depression from Text Using a Relational-Graph Neural Network
+# Predicting Depression Severity from Text Using a Relational-Graph Neural Network to Represent the Underlying Cognitive Bias
 This repo contains scripts to model depression in text.
 
 ### Data
-The data used can be downloaded from the [Distress Analysis Interview Corpus](http://dcapswoz.ict.usc.edu/), and contains audio, video, and text of interviews with 142 subjects, about 20% of whom had some level of depression.
+The data used can be downloaded from the [Distress Analysis Interview Corpus](http://dcapswoz.ict.usc.edu/), and contains audio, video, and text of interviews with 142 subjects, about 30% of whom had some level of depression.
 
 ### Files
 The repo contains the following files:
