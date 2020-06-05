@@ -10,9 +10,8 @@ from pmi import cal_PMI
 from sklearn.metrics import accuracy_score,mean_squared_error
 from laplotter import LossAccPlotter
 
-NUM_ITER_EVAL = 150  #100
-EARLY_STOP_EPOCH = 250  #250
-
+NUM_ITER_EVAL = 150
+EARLY_STOP_EPOCH = 250
 
 """## add window size create connect matrix ##"""
 
@@ -50,18 +49,14 @@ def dev(model):
   print('*'*100)
   print('dev set total:',b_size)
   loss_func = torch.nn.MSELoss(reduction='sum') ##reduction='sum'
-  loss_mae = torch.nn.L1Loss(reduction='sum') ##reduction='sum'
+  loss_mae = torch.nn.L1Loss(reduction='sum')
 
   iter = 0
   total_loss = 0
   for content, label , _ in data_helper.batch_iter(batch_size = b_size, num_epoch=1):
       iter +=1
       model.eval()
-      ## the original version is for classification task here is just regression:
-      # logits = model(content)
-
       ##need modify the regression task will minimize the mse error
-      # pred = torch.argmax(logits, dim =1)
       pred = model(content)
       pred_sq = torch.squeeze(pred,1)
       loss = loss_func(pred_sq.cpu().data, label.cpu())
@@ -69,18 +64,13 @@ def dev(model):
       error = loss_mae(pred_sq.cpu().data, label.cpu())
       # error = mean_absolute_error(pred_sq.cpu().data, label.cpu())
       accuracy += error
-      # correct_pred = torch.sum(pred == label)
-
-      # correct += correct_pred
-      # count total doc number
       total_pred = len(label)
 
   total_pred = float(total_pred)
-  # correct = correct.float()
   accuracy = float(accuracy)
  
   
-  #return the overall accuracy   torch.div(accuracy, total_pred)
+  #return the overall accuracy
   return (accuracy/total_pred), (float(loss)/total_pred)
 
 def test(model):
@@ -90,8 +80,7 @@ def test(model):
   b_size = len(data_helper.label)
   print('test set total:',b_size)
 
-  loss_func = torch.nn.MSELoss(reduction='sum') ##reduction='sum'
-
+  loss_func = torch.nn.MSELoss(reduction='sum')
   total_pred= 0
   correct = 0
   iter = 0
@@ -111,22 +100,16 @@ def test(model):
       # error = mean_squared_error(pred_sq.cpu().data, label.cpu())
       error = mean_absolute_error(pred_sq.cpu().data, label.cpu(), multioutput = 'raw_values')
       accuracy += error
-      # correct_pred = torch.sum(pred==label)
-      # correct += correct_pred
       total_pred = len(label)
       pre_score.append(pred_sq.cpu().data)
       score.append(label.cpu())
 
   total_pred = float(total_pred)
-  # correct = correct.float()
   accuracy = float(accuracy)
-  # pre_score = float(pred_sq.cpu().data)
-  # score = 
   print(torch.div(accuracy, total_pred))
   _ = result_pull(pre_score, score)
   # print('iter is:', iter)
   print('pred result:%.2f, true score:%d'%(pre_score,score))
-  # return torch.div(correct, total_pred).to('cpu')
   
   return torch.div(accuracy, total_pred)
 
@@ -184,14 +167,14 @@ def train(ngram, name, bar, drop_out, dataset, is_cuda= False, edges=False):
     if bar:
       pbar = tqdm.tqdm(total = NUM_ITER_EVAL)
 
-    best_acc = 4.4 #0.0
+    best_acc = 0.0
     last_best_epoch = 0
     start_time = time.time()
     total_loss= 0.0
     total_correct = 0
     total = 0
     accuracy = 0.0
-    num_epoch = 700
+    num_epoch = 500
     weight_decays = 1e-4
     for content, label, epoch in data_helper.batch_iter(batch_size = 32,  num_epoch = num_epoch):
       improved = ''
@@ -323,7 +306,7 @@ dropout = 0.5
 dataset = 'depress'
 edges = True
 rand = 20
-max_length=4600 #the max len for each doc
+max_length=4600 #the max len
 SEED = rand
 
 torch.manual_seed(SEED)
@@ -334,63 +317,6 @@ random.seed(SEED)
 
 model = train(ngram = ngram, name = name, dataset = dataset, bar=bar, drop_out=dropout, is_cuda=True, edges=edges)
 
-
-#the result by testing the distribution of each word
-
-def edges_mapping1(vocab_len, helper, ngram):
-    # helper = DataHelper(mode="train")
-    content, label = helper.get_content()
-    
-
-    pair_count_matrix = np.zeros((len(helper.vocab), len(helper.vocab)), dtype=int)
-    word_count =np.zeros(len(helper.vocab), dtype=int)
-    
-        
-    for sentence in content:
-        sentence = sentence.split(' ')
-        for i, word in enumerate(sentence):
-            try:
-                word_count[helper.d[word]] += 1
-            except KeyError:
-                continue
-            start_index = max(0, i - ngram)
-            end_index = min(len(sentence), i + ngram)
-            for j in range(start_index, end_index):
-                if i == j:
-                    continue
-                else:
-                    target_word = sentence[j]
-                    try:
-                        pair_count_matrix[helper.d[word], helper.d[target_word]] += 1
-                    except KeyError:
-                        continue
-        
-    total_count = np.sum(word_count)
-    word_count = word_count / total_count
-    pair_count_matrix = pair_count_matrix / total_count
-    # print(pair_count_matrix)
-    pmi_matrix = np.zeros((len(helper.vocab), len(helper.vocab)), dtype=float)
-    for i in range(len(helper.vocab)):
-        for j in range(len(helper.vocab)):
-            pmi_matrix[i, j] = np.log(
-                pair_count_matrix[i, j] / (word_count[i] * word_count[j]) 
-            )
-    
-    pmi_matrix = np.nan_to_num(pmi_matrix)
-    
-    pmi_matrix = np.maximum(pmi_matrix, 0.0)
-
-    edges_weights = [0.0]
-    count = 1
-    edges_mappings = np.zeros((len(helper.vocab), len(helper.vocab)), dtype=int)
-    for i in range(len(helper.vocab)):
-        for j in range(len(helper.vocab)):
-            if pmi_matrix[i, j] != 0:
-                edges_mappings[i, j] = count
-                count += 1
-
-    
-    return count, edges_mappings
 
 def eval_test(model,data_helper, b_size=1):
   
