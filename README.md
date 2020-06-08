@@ -4,15 +4,30 @@ This repo contains scripts to model depression in text.
 ### Data
 The data used can be downloaded from the [Distress Analysis Interview Corpus](http://dcapswoz.ict.usc.edu/), and contains audio, video, and text of interviews with 142 subjects, about 30% of whom had some level of depression.
 
+### Note
+The data including real human participants cannot be released in public. Data accessing permission is required before using of those data. More details can be found [here](http://dcapswoz.ict.usc.edu/).
+
 ### Files
 The repo contains the following files:
 
-- **train.py** which contains the methods used to train the models.
+- **train.py** which contains the methods used to train the model.
 - **model.py** which contains the gnn model
+- **eval.py**  which evaluate the model
 - **vis_gnn.py** which contains visualization for evaluating the doc
 - **requirements.txt** which are the libraries used in the conda environment of this project.
 - **data_helper** which contains the method of converting the text to graph
 - **pmi.py** which contains the method of computing the edge weights between word nodes
+
+## Results
+
+Our model achieves the following performance on :
+
+### PHQ regression
+![log](./results/1.jpg)
+
+<!--### Loss Curve-->
+<!---->
+<!--![loss](./resulta/2.jpg)-->
 
 pyTorch back-end was used for modeling.
 
