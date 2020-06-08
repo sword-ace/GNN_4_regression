@@ -24,7 +24,7 @@ Our model achieves the following performance on :
 
 ### PHQ regression
 
-![results](1.png)
+![results](res1.jpg)
 
 <!--### Loss Curve-->
 <!---->
