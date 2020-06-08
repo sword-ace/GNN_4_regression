@@ -90,14 +90,9 @@ def test(model):
   for content, label, _ in data_helper.batch_iter(batch_size = b_size, num_epoch=1):
       iter +=1
       model.eval()
-      # logits = model(content)
-      # pred = torch.argmax(logtist,dim=1)
       pred = model(content)
       pred_sq = torch.squeeze(pred,1)
       loss = loss_func(pred_sq, label.float())
-      # pred = torch.argmax(logits, dim =1)
-      #--------------------------------------------------#
-      # error = mean_squared_error(pred_sq.cpu().data, label.cpu())
       error = mean_absolute_error(pred_sq.cpu().data, label.cpu(), multioutput = 'raw_values')
       accuracy += error
       total_pred = len(label)
