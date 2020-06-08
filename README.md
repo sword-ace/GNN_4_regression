@@ -23,8 +23,8 @@ The repo contains the following files:
 Our model achieves the following performance on :
 
 ### PHQ regression
-**Results
-![log](./results/1.jpg)
+
+![results](1.jpg)
 
 <!--### Loss Curve-->
 <!---->
