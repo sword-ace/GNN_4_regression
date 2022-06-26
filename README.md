@@ -1,5 +1,6 @@
 # Predicting Depression Severity from Text Using a Relational-Graph Neural Network to Represent the Underlying Cognitive Bias
 This repo contains scripts to model depression in text.
+### The published paper can be found [here](https://github.com/sword-ace/GNN_4_regression/blob/37fd5cf4a588f9018e593f26e5e442b54365e732/DLG-AAAI21.pdf)
 
 ### Data
 The data used can be downloaded from the [Distress Analysis Interview Corpus](http://dcapswoz.ict.usc.edu/), and contains audio, video, and text of interviews with 142 subjects, about 30% of whom had some level of depression.
